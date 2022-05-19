@@ -10,26 +10,34 @@ from pptx import Presentation
 from pptx.util import Inches
 import pptx
 
+# Opens Chrome and navigates to Deal Roadshow
 driver = webdriver.Chrome('C:/Users/elopez1/PythonProjects/Roadshow SS/chromedriver')
 driver.get('https://dealroadshow.com')
 time.sleep(1)
+
+# Types in Email
 email_input = driver.find_element(By.XPATH,
                                           '/html/body/div[1]/div[2]/div/div[1]/div[1]/div/div[1]/form/div[1]/label[2]/input')
 email_input.send_keys('Emmanuel.Lopez@pnmac.com')
 
-
+# App Frame
 class Mainapp:
     def __init__(self):
         dim = None
         app = Tk()
-        app.geometry("250x500")
-        slide_count_label = Label(app, text='                        # of Slides', font=('Calibri', 11), pady=20)
-        slide_count_label.grid(row=0, column=0, sticky=W)
+        app.geometry("200x400")
 
-        # Entry
+        #Labels
+        space = Label(app, text='          ', font=('Calibri', 11), pady=20)
+        space.grid(row=0, column=0, sticky=W)
+        slide_count_label = Label(app, text='        # of Slides', font=('Calibri', 11), pady=20)
+        slide_count_label.grid(row=0, column=1, sticky=W)
+
+        # Entry Box
         self.slide_count_text = IntVar()
         Entry(app, textvariable=self.slide_count_text).grid(row=1, column=1, pady=20)
 
+        # Buttons
         Button(app, text='Rip Deck', width=15,
                command=self.Screenshot).grid(row=4, column=1, pady=20)
 
@@ -45,6 +53,7 @@ class Mainapp:
         app.mainloop()
 
     def Screenshot(self):
+        # Clicks through presentation and screenshots each slide
         slide_count = self.slide_count_text.get()
         next_button = driver.find_element(By.XPATH,
                                           '/html/body/div[1]/div/div/div/div/div[2]/div/div[1]/div[3]/div/div[2]/span/span/button')
@@ -55,6 +64,7 @@ class Mainapp:
             time.sleep(1)
 
     def CreatePP(self):
+        # Compiles all the screenshots into a single PowerPoint
         slide_count = self.slide_count_text.get()
         prs = Presentation()
         layout = prs.slide_layouts[6]
@@ -72,9 +82,8 @@ class Mainapp:
         prs.save('C:/Users/elopez1/PythonProjects/Roadshow SS/test.pptx')
 
 
-
-
 class ScreenSize:
+    # Used to display reference screenshot so user can drag rectangle to record the presentation dimensions
     def __init__(self):
         WIDTH, HEIGHT = 900, 900
         topx, topy, botx, boty = 0, 0, 0, 0
@@ -84,9 +93,6 @@ class ScreenSize:
 
         im=ImageGrab.grab()
         im.save("C:/Users/elopez1/PythonProjects/Roadshow SS/Screenshots/FullScreen.png")
-
-
-
 
         window = Toplevel()
         window.title("Select Area")
@@ -126,6 +132,7 @@ class ScreenSize:
 
 
 def dimensions():
+    # Records the dimensions of the rectangle dragged by the user then closes the reference screenshot
     dlist = canvas.coords(rect_id)
     global x1, y1, x2, y2
     x1, y1, x2, y2 = [i for i in dlist]
